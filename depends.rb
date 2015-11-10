@@ -4,6 +4,19 @@ Bundler.require(:default)
 require "json"
 require 'sinatra/reloader' if development?
 
+get "/" do
+  erb :index
+end
+
+get "/search" do
+  if !params[:gem].empty?
+    redirect "/gem/#{params[:gem]}"
+  else
+    redirect "/"
+  end
+end
+
+
 get "/gem/:name" do
   results = rubygems_get(gem_name: params[:name], endpoint: "reverse_dependencies?only=runtime")
 
