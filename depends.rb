@@ -17,9 +17,11 @@ get "/gem/:name" do
     end
   end
 
-  weighted_results.sort {|(k1, v1), (k2, v2)| v2 <=> v1 }.first(50).each_with_index do |(k, v), i|
+  @gems = weighted_results.sort {|(k1, v1), (k2, v2)| v2 <=> v1 }.first(50).each_with_index do |(k, v), i|
     puts "#{i}) #{k}: #{v}"
   end
+
+  erb :gem
 end
 
 private

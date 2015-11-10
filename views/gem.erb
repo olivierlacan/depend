@@ -1,0 +1,12 @@
+<h1><%= params[:name] %></h1>
+<% if !@gems.empty? %>
+  <ul>
+    <% @gems.each do |gem| %>
+      <li><%= gem.first %></li>
+    <% end %>
+  </ul>
+<% else %>
+  <p>
+    It seems like <%= params[:name] %> isn't depended on much.
+  </p>
+<% end %>
