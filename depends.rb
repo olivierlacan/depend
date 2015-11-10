@@ -34,7 +34,7 @@ end
 
 def connection
   @connection ||= begin
-    conn = Faraday.new(url: "http://rubygems.org") do |faraday|
+    conn = Faraday.new(url: "https://rubygems.org") do |faraday|
       faraday.adapter :httpclient
     end
   end
