@@ -1,10 +1,11 @@
-require "net/https"
-require "uri"
+require "bundler"
+Bundler.require(:default)
+
 require "json"
-require "sinatra"
+require 'sinatra/reloader' if development?
 
 get "/gem/:name" do
-  results = rubygems_get(gem_name: "rack", endpoint: "reverse_dependencies")
+  results = rubygems_get(gem_name: params[:name], endpoint: "reverse_dependencies?only=runtime")
 
   weighted_results = {}
 
@@ -25,12 +26,14 @@ private
 
 def rubygems_get(gem_name: "", endpoint: "")
   path = File.join("/api/v1/gems/", gem_name, endpoint).chomp("/") + ".json"
-  uri = URI.parse("https://www.rubygems.org" + path)
-
-  http = Net::HTTP.new(uri.host, uri.port)
-  http.use_ssl = true
-  http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-
-  response = http.get(uri.request_uri)
+  response = connection.get(path)
   JSON.parse(response.body)
+end
+
+def connection
+  @connection ||= begin
+    conn = Faraday.new(url: "http://rubygems.org") do |faraday|
+      faraday.adapter :httpclient
+    end
+  end
 end
