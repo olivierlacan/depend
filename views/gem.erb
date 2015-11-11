@@ -1,5 +1,10 @@
 <h1><%= params[:name] %></h1>
 <% if !@gems.empty? %>
+  <% if @gems.length == 50 %>
+    <p>
+      These are the 50 most downloaded gems that depend on <%= params[:name] %>.
+    </p>
+  <% end %>
   <ul>
     <% @gems.each do |gem| %>
       <li><%= gem[:name] %> (<%= gem[:count] %>)</li>
