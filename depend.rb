@@ -31,8 +31,12 @@ get "/gem/:name" do
 
   @gems = []
 
-  weighted_results.sort {|(k1, v1), (k2, v2)| v2 <=> v1 }.first(50).each_with_index do |(k, v), i|
-    @gems << { name: k, count: v }
+  sorted_by_download_count = weighted_results.sort do |(name1, count1), (name2, count2)|
+    count2 <=> count1
+  end
+
+  sorted_by_download_count.first(50).each do |(name, count)|
+    @gems << { name: name, downloads: count }
   end
 
   erb :gem
