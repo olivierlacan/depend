@@ -2,7 +2,7 @@
 <% if !@gems.empty? %>
   <ul>
     <% @gems.each do |gem| %>
-      <li><%= gem.first %></li>
+      <li><%= gem[:name] %> (<%= gem[:count] %>)</li>
     <% end %>
   </ul>
 <% else %>

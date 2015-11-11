@@ -16,7 +16,6 @@ get "/search" do
   end
 end
 
-
 get "/gem/:name" do
   results = rubygems_get(gem_name: params[:name], endpoint: "reverse_dependencies?only=runtime")
 
@@ -26,12 +25,14 @@ get "/gem/:name" do
     begin
       weighted_results[name] = rubygems_get(gem_name: name)["downloads"]
     rescue => e
-      puts "#{name} #{e.message}"
+      puts "API Error for #{name}: #{e.message}"
     end
   end
 
-  @gems = weighted_results.sort {|(k1, v1), (k2, v2)| v2 <=> v1 }.first(50).each_with_index do |(k, v), i|
-    puts "#{i}) #{k}: #{v}"
+  @gems = []
+
+  weighted_results.sort {|(k1, v1), (k2, v2)| v2 <=> v1 }.first(50).each_with_index do |(k, v), i|
+    @gems << { name: k, count: v }
   end
 
   erb :gem
