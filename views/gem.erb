@@ -7,7 +7,7 @@
   <% end %>
   <ul>
     <% @gems.each do |gem| %>
-      <li><%= gem[:name] %> (<%= gem[:count] %>)</li>
+      <li><a href="https://rubygems.org/gems/<%= gem[:name] %>"><%= gem[:name] %></a> (<%= gem[:downloads] %> downloads)</li>
     <% end %>
   </ul>
 <% else %>
