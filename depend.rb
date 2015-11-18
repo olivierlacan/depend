@@ -3,6 +3,7 @@ Bundler.require(:default)
 
 require "json"
 require 'sinatra/reloader' if development?
+require_relative "fetch_gem_worker"
 
 get "/" do
   erb :index
@@ -19,19 +20,13 @@ end
 get "/gem/:name" do
   results = rubygems_get(gem_name: params[:name], endpoint: "reverse_dependencies?only=runtime")
 
-  weighted_results = {}
-
-  results.each do |name|
-    begin
-      weighted_results[name] = rubygems_get(gem_name: name)["downloads"]
-    rescue => e
-      puts "API Error for #{name}: #{e.message}"
-    end
-  end
-
+  download_counts = {}
   @gems = []
 
-  sorted_by_download_count = weighted_results.sort do |(name1, count1), (name2, count2)|
+  results.each { |name| FetchGemWorker.perform_async(name) }
+  results.map { |name| download_counts[name] = $redis.get(name) }
+
+  sorted_by_download_count = download_counts.sort do |(name1, count1), (name2, count2)|
     count2 <=> count1
   end
 
